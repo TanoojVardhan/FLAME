@@ -1,7 +1,10 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { useEffect, useRef } from 'react';
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import { Flame, Heart, Users, Smile, Diamond, Frown, Home as HomeIcon, Loader2 } from 'lucide-react';
 import { getFlamesResult } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -77,7 +80,7 @@ function ResultDisplay({ state }: { state: typeof initialState }) {
 }
 
 export default function Home() {
-  const [state, formAction] = useFormState(getFlamesResult, initialState);
+  const [state, formAction] = useActionState(getFlamesResult, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -91,13 +94,27 @@ export default function Home() {
     }
   }, [state.error, toast]);
 
-  // Reset form on successful calculation
+
+  // Save to Firestore on successful calculation
   useEffect(() => {
-    if (state.result) {
-      // We don't reset the form fields, so user can see what they entered
-      // formRef.current?.reset();
+    async function saveToFirestore() {
+      if (state.result && state.names && state.explanation) {
+        try {
+          await addDoc(collection(db, 'flames_results'), {
+            name1: state.names.name1,
+            name2: state.names.name2,
+            result: state.result,
+            explanation: state.explanation,
+            createdAt: new Date(),
+          });
+        } catch (e) {
+          // Optionally handle/log error
+          console.error('Firestore save error:', e);
+        }
+      }
     }
-  }, [state.result]);
+    saveToFirestore();
+  }, [state.result, state.names, state.explanation]);
 
   return (
     <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4 sm:p-8">

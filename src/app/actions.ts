@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { calculateFlames, type FlamesResult } from '@/lib/flames';
 import { explainFlamesResult } from '@/ai/flows/explain-flames-result';
+import { saveFlamesSubmission } from '@/lib/firestore-server';
 
 const formSchema = z.object({
   name1: z.string().min(1, 'Please enter your name.'),
@@ -35,13 +36,17 @@ export async function getFlamesResult(
 
   try {
     const flamesResult = calculateFlames(name1, name2);
-    
+
+    let explanation: string;
     if (name1.trim().toLowerCase() === name2.trim().toLowerCase()) {
-        return {
-            result: flamesResult,
-            explanation: `Of course, it's ${flamesResult}! You've entered the same name twice. True self-discovery! For a relationship reading, try two different names.`,
-            names: { name1, name2 },
-        }
+      explanation = `Of course, it's ${flamesResult}! You've entered the same name twice. True self-discovery! For a relationship reading, try two different names.`;
+      // Store in Firestore
+      await saveFlamesSubmission({ name1, name2, result: flamesResult, explanation });
+      return {
+        result: flamesResult,
+        explanation,
+        names: { name1, name2 },
+      };
     }
 
     const aiExplanation = await explainFlamesResult({
@@ -49,10 +54,12 @@ export async function getFlamesResult(
       name2,
       flamesResult,
     });
-
+    explanation = aiExplanation.explanation;
+    // Store in Firestore
+    await saveFlamesSubmission({ name1, name2, result: flamesResult, explanation });
     return {
       result: flamesResult,
-      explanation: aiExplanation.explanation,
+      explanation,
       names: { name1, name2 },
     };
   } catch (e) {
