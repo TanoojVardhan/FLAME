@@ -148,7 +148,7 @@ export default function Home() {
               {/* New input for feeling */}
               <div className="space-y-2">
                 <Label htmlFor="feeling">How are you feeling?</Label>
-                <Input id="feeling" name="feeling" placeholder="How do you feel about this person?" required />
+                <Input id="feeling" name="feeling" placeholder="How do you feel about this person?" />
               </div>
             </CardContent>
             <CardFooter>

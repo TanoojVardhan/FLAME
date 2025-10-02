@@ -8,7 +8,7 @@ import { saveFlamesSubmission } from '@/lib/firestore-server';
 const formSchema = z.object({
   name1: z.string().min(1, 'Please enter your name.'),
   name2: z.string().min(1, 'Please enter their name.'),
-  feeling: z.string().min(1, 'Please describe your feelings.'),
+  feeling: z.string().optional(),
 });
 
 interface FlamesState {

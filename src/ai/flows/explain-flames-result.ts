@@ -13,7 +13,7 @@ import {z} from 'genkit';
 const ExplainFlamesResultInputSchema = z.object({
   name1: z.string().describe('The first name entered by the user.'),
   name2: z.string().describe('The second name entered by the user.'),
-  feeling: z.string().describe('How the user feels about the other person.'),
+  feeling: z.string().optional().describe('How the user feels about the other person.'),
   flamesResult: z
     .enum(['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings', 'Fling'])
     .describe('The FLAMES result calculated for the two names.'),
@@ -47,9 +47,11 @@ const prompt = ai.definePrompt({
 
   The possible FLAMES results are: Friends, Love, Affection, Marriage, Enemy, Siblings, and Fling. 'Fling' means a short-term, passionate, but not lasting relationship.
 
+  {{#if feeling}}
   The user has described their feelings for the other person as: "{{feeling}}".
+  {{/if}}
 
-  Based on the names {{name1}} and {{name2}}, the user's feelings, and the FLAMES result of {{flamesResult}}, tell directly what is going to happen between them. Do not explain or interpret the result, just state the outcome.
+  Based on the names {{name1}} and {{name2}}, {{#if feeling}}the user's feelings, and {{/if}}the FLAMES result of {{flamesResult}}, tell directly what is going to happen between them. Do not explain or interpret the result, just state the outcome.
   `,
 });
 
