@@ -8,6 +8,7 @@ import { saveFlamesSubmission } from '@/lib/firestore-server';
 const formSchema = z.object({
   name1: z.string().min(1, 'Please enter your name.'),
   name2: z.string().min(1, 'Please enter their name.'),
+  feeling: z.string().min(1, 'Please describe your feelings.'),
 });
 
 interface FlamesState {
@@ -24,6 +25,7 @@ export async function getFlamesResult(
   const validatedFields = formSchema.safeParse({
     name1: formData.get('name1'),
     name2: formData.get('name2'),
+    feeling: formData.get('feeling'),
   });
 
   if (!validatedFields.success) {
@@ -32,7 +34,7 @@ export async function getFlamesResult(
     };
   }
 
-  const { name1, name2 } = validatedFields.data;
+  const { name1, name2, feeling } = validatedFields.data;
 
   try {
     const flamesResult = calculateFlames(name1, name2);
@@ -41,7 +43,7 @@ export async function getFlamesResult(
     if (name1.trim().toLowerCase() === name2.trim().toLowerCase()) {
       explanation = `Of course, it's ${flamesResult}! You've entered the same name twice. True self-discovery! For a relationship reading, try two different names.`;
       // Store in Firestore
-      await saveFlamesSubmission({ name1, name2, result: flamesResult, explanation });
+      await saveFlamesSubmission({ name1, name2, feeling, result: flamesResult, explanation });
       return {
         result: flamesResult,
         explanation,
@@ -52,11 +54,12 @@ export async function getFlamesResult(
     const aiExplanation = await explainFlamesResult({
       name1,
       name2,
+      feeling,
       flamesResult,
     });
     explanation = aiExplanation.explanation;
     // Store in Firestore
-    await saveFlamesSubmission({ name1, name2, result: flamesResult, explanation });
+    await saveFlamesSubmission({ name1, name2, feeling, result: flamesResult, explanation });
     return {
       result: flamesResult,
       explanation,

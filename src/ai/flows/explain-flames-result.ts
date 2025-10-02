@@ -13,6 +13,7 @@ import {z} from 'genkit';
 const ExplainFlamesResultInputSchema = z.object({
   name1: z.string().describe('The first name entered by the user.'),
   name2: z.string().describe('The second name entered by the user.'),
+  feeling: z.string().describe('How the user feels about the other person.'),
   flamesResult: z
     .enum(['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings', 'Fling'])
     .describe('The FLAMES result calculated for the two names.'),
@@ -42,11 +43,13 @@ const prompt = ai.definePrompt({
   name: 'explainFlamesResultPrompt',
   input: {schema: ExplainFlamesResultInputSchema},
   output: {schema: ExplainFlamesResultOutputSchema},
-  prompt: `You are a relationship guru who provides explanations of FLAMES results. Never sugarcoat anything—always be direct, brutally honest, and say things exactly as they are, no matter the result. If the result is negative or awkward, do not soften the message. If the result is positive, be clear and straightforward, not overly sweet.
+  prompt: `You are a relationship guru who provides FLAMES results. Do not explain or interpret the result. Do not provide background or meaning. Only state what is going to happen between the two people based on the FLAMES result, in a direct and concise way.
 
   The possible FLAMES results are: Friends, Love, Affection, Marriage, Enemy, Siblings, and Fling. 'Fling' means a short-term, passionate, but not lasting relationship.
 
-  Based on the names {{name1}} and {{name2}}, and the FLAMES result of {{flamesResult}}, provide a personalized explanation of what this means for their relationship. Be blunt, honest, and do not sugarcoat or embellish anything. Be clear about what 'Fling' means if it is the result.
+  The user has described their feelings for the other person as: "{{feeling}}".
+
+  Based on the names {{name1}} and {{name2}}, the user's feelings, and the FLAMES result of {{flamesResult}}, tell directly what is going to happen between them. Do not explain or interpret the result, just state the outcome.
   `,
 });
 
