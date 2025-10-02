@@ -5,8 +5,8 @@ async function createDemoSubmission() {
   await saveFlamesSubmission({
     name1: "Alice",
     name2: "Bob",
-    result: "Friends",
-    explanation: "Alice and Bob are friends according to the FLAMES algorithm."
+  result: "Fling",
+  explanation: "Alice and Bob have a short-term fling according to the FLAMES algorithm."
   });
 }
 

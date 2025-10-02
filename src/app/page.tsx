@@ -33,6 +33,7 @@ const resultIcons: Record<FlamesResult, React.ElementType> = {
   Marriage: Diamond,
   Enemy: Frown,
   Siblings: HomeIcon,
+  Fling: Flame,
 };
 
 function SubmitButton() {

@@ -1,6 +1,6 @@
-export type FlamesResult = 'Friends' | 'Love' | 'Affection' | 'Marriage' | 'Enemy' | 'Siblings';
+export type FlamesResult = 'Friends' | 'Love' | 'Affection' | 'Marriage' | 'Enemy' | 'Siblings' | 'Fling';
 
-const FLAMES_SEQUENCE: FlamesResult[] = ['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings'];
+const FLAMES_SEQUENCE: FlamesResult[] = ['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings', 'Fling'];
 
 export function calculateFlames(name1: string, name2: string): FlamesResult {
   let str1 = name1.toLowerCase().replace(/[^a-z]/g, '');
